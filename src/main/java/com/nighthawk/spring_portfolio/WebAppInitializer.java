@@ -1,4 +1,4 @@
-package com.nighthawk;
+package com.nighthawk.spring_portfolio;
 
 import javax.servlet.*;
 
