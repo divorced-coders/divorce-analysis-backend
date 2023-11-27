@@ -1,4 +1,4 @@
-package com.nighthawk.mvc.fibonacci;
+package com.nighthawk.spring_portfolio.mvc.fibonacci;
 
 import java.util.HashMap;
 import java.util.Map;

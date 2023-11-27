@@ -1,6 +1,6 @@
-package com.nighthawk.mvc.fibonacci;
+package com.nighthawk.spring_portfolio.mvc.fibonacci;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import lombok.*;
 
