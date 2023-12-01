@@ -52,11 +52,13 @@ public class DailyStocks {
     private String symbol;
 
     public DailyStocks(String open, String close, String high, String low, String volume, String symbol){
-        this.open = open;
-        this.close = close;
-        this.high = high;
-        this.low = low;
-        this.volume = volume;
-        this.symbol = symbol;
+        // Initialize instance variables with provided values
+        this.open = open;       // Opening stock price for the day
+        this.close = close;     // Closing stock price for the day
+        this.high = high;       // Highest stock price during the day
+        this.low = low;         // Lowest stock price during the day
+        this.volume = volume;   // Trading volume for the day
+        this.symbol = symbol;   // Stock symbol or ticker
     }
+    
 }
