@@ -60,7 +60,7 @@ public class MonthlyStocks {
     @NonNull
     private String symbol;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date date;
 
     @ManyToMany(fetch = EAGER)
