@@ -67,12 +67,14 @@ public class MonthlyStocks {
     private Collection<DailyStocks> daily = new ArrayList<>();
 
     public MonthlyStocks(String open, String close, String high, String low, String volume, String symbol, Date date){
-        this.open = open;
-        this.close = close;
-        this.high = high;
-        this.low = low;
-        this.volume = volume;
-        this.symbol = symbol;
-        this.date = date;   
+        // Initialize instance variables with provided values
+        this.open = open;       // Opening stock price for the month
+        this.close = close;     // Closing stock price for the month
+        this.high = high;       // Highest stock price during the month
+        this.low = low;         // Lowest stock price during the month
+        this.volume = volume;   // Trading volume for the month
+        this.symbol = symbol;   // Stock symbol or ticker
+        this.date = date;       // Date corresponding to the monthly stock data
     }
+    
 }
