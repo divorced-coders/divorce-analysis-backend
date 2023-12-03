@@ -1,21 +1,24 @@
 package com.nighthawk.spring_portfolio.mvc;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nighthawk.spring_portfolio.mvc.stocks.DailyStocks;
 import com.nighthawk.spring_portfolio.mvc.stocks.DailyStocksJpaRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpResponse;
-import java.util.List;
-
-
-import java.net.http.HttpRequest;
 
 
 @Component
@@ -34,6 +37,47 @@ public class ModelInit {
             .build();
         HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println(response.body());
+        String data = response.body();
+        
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> jsonData = objectMapper.readValue(data, new TypeReference<Map<String, Object>>() {});
+        Map<String, Object> metaData = (Map<String, Object>) jsonData.get("Meta Data");
+        String symbol = metaData != null ? (String) metaData.get("2. Symbol") : "N/A";
+        Map<String, Map<String, String>> timeSeries = (Map<String, Map<String, String>>) jsonData.get("Time Series (Daily)");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        if (timeSeries != null) {
+                    // Iterate over each date in the time series
+                    for (Map.Entry<String, Map<String, String>> entry : timeSeries.entrySet()) {
+                        String dateString = entry.getKey();
+                        Map<String, String> dayData = entry.getValue();
+                        Date date = dateFormat.parse(dateString);
+                        
+                        // Now you can access the date and dayData information
+                        System.out.println("Date: " + dateString);
+                        System.out.println("Open: " + dayData.get("1. open"));
+                        String open = dayData.get("1. open");
+                        System.out.println("Close: " + dayData.get("4. close"));
+                        String close = dayData.get("4. close");
+                        System.out.println("High: " + dayData.get("2. high"));
+                        String high = dayData.get("2. high");
+                        System.out.println("Low: " + dayData.get("3. low"));
+                        String low = dayData.get("3. low");
+                        System.out.println("Volume: " + dayData.get("5. volume"));
+                        String volume = dayData.get("5. volume");
+                        System.out.println("---------------------");
+                        List<DailyStocks> dayfound = dailyrepo.findBySymbolAndDate(symbol, date);
+
+                        if(dayfound.size() == 0){
+                            DailyStocks daily = new DailyStocks(open, close, high, low, volume, symbol, date);
+                            dailyrepo.save(daily);
+                        }
+                        else {
+                            System.out.println("found");
+                        }
+                    }
+                } else {
+                    System.out.println("No time series data found");
+                }
         };
 
     }
