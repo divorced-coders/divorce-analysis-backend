@@ -16,7 +16,7 @@ public class DailyStocksApiController {
     private DailyStocksJpaRepository repository;
 
     @GetMapping("/")
-    public ResponseEntity<List<DailyStocks>> getJokes() {
+    public ResponseEntity<List<DailyStocks>> getDailyStocks() {
         // ResponseEntity returns List of Jokes provide by JPA findAll()
         return new ResponseEntity<>( repository.findAll(), HttpStatus.OK);
     }
