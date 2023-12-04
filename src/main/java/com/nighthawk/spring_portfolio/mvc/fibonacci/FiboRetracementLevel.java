@@ -6,18 +6,14 @@ import lombok.*;
 
 @NoArgsConstructor
 @Entity
-public class FibonacciRetracementLevel {
+public class FiboRetracementLevel {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
+  @Getter
+  @Setter
   private double value;
 
-  public void initFibonacciRetracementLevels() {
-
-  }
-  public static void main(String[] args) {
-    System.out.println(FibonacciSequenceCalculator.fibonacci(8));
-  }
 }

@@ -19,6 +19,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nighthawk.spring_portfolio.mvc.stocks.DailyStocks;
 import com.nighthawk.spring_portfolio.mvc.stocks.DailyStocksJpaRepository;
+import com.nighthawk.spring_portfolio.mvc.fibonacci.Fibo;
+import com.nighthawk.spring_portfolio.mvc.fibonacci.FiboRepository;
+import com.nighthawk.spring_portfolio.mvc.fibonacci.FiboRetracementLevel;
+import com.nighthawk.spring_portfolio.mvc.fibonacci.FibonacciViaMemoization;
 
 
 @Component
@@ -81,5 +85,24 @@ public class ModelInit {
         };
 
     }
+
+    public static FiboRetracementLevel[] initRetracements(int n) {
+        FiboRetracementLevel[] retracements = new FiboRetracementLevel[n + 1];
+        Fibo fibo = new FibonacciViaMemoization();
+        for (int i = 0; i <= n; i++) {
+            FiboRetracementLevel level = new FiboRetracementLevel();
+            if (i >= 2) {
+                double numerator = fibo.fibonacci(i - 2);
+                double denominator = fibo.fibonacci(i - 1);
+                level.setValue(numerator / denominator);
+            } else {
+                // Handle the case where i < 2
+                level.setValue(0); // You can set the value to another default value if needed
+            }
+            retracements[i] = level;
+        }
+        return retracements;
+    }
+
 }
 

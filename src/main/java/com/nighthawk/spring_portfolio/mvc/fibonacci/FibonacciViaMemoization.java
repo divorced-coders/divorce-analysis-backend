@@ -3,13 +3,14 @@ package com.nighthawk.spring_portfolio.mvc.fibonacci;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FibonacciSequenceCalculator {
+public class FibonacciViaMemoization extends Fibo {
     
     // Stores state throughout all calls
     private static Map<Integer, Integer> memo = new HashMap<>();
 
     // Ideally O(n) Time & O(n) Space
-    public static int fibonacci(int n) {
+    @Override
+    public int fibonacci(int n) {
         // Base case: if n is 0 or 1, return n
         if (n <= 1) {
             return n;
@@ -30,21 +31,11 @@ public class FibonacciSequenceCalculator {
         // Return the calculated result
         return result;
     }
-    
-
-    // O(2^n) Time & O(n) Space
-    public static int fibonacci(Integer n) {
-        if (n <= 1) {
-            return n;
-        } else {
-            System.out.println(n);
-            return fibonacci(n - 1) + fibonacci(n - 2);
-        }
-    }
 
     public static void main(String[] args) {
+        Fibo fibo = new FibonacciViaMemoization();
         int n = 4;
-        int result = fibonacci(n);
+        int result = fibo.fibonacci(n);
         System.out.println(result);
     }
 }
