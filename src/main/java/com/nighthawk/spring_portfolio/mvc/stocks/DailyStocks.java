@@ -5,6 +5,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.annotation.Nonnull;
+import jakarta.persistence.*;
+
+import java.util.Date;
 
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -13,10 +17,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.mongodb.lang.NonNull;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 /*
 Person is a POJO, Plain Old Java Object.
 First set of annotations add functionality to POJO
@@ -51,7 +55,11 @@ public class DailyStocks {
     @NonNull
     private String symbol;
 
-    public DailyStocks(String open, String close, String high, String low, String volume, String symbol){
+    @Nonnull
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
+    private Date date;
+
+    public DailyStocks(String open, String close, String high, String low, String volume, String symbol, Date date){
         // Initialize instance variables with provided values
         this.open = open;       // Opening stock price for the day
         this.close = close;     // Closing stock price for the day
@@ -59,6 +67,7 @@ public class DailyStocks {
         this.low = low;         // Lowest stock price during the day
         this.volume = volume;   // Trading volume for the day
         this.symbol = symbol;   // Stock symbol or ticker
+        this.date = date;
     }
     
 }

@@ -15,15 +15,16 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.mongodb.lang.NonNull;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Collection;
 
 import static jakarta.persistence.FetchType.EAGER;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+/*
 
 /*
 Person is a POJO, Plain Old Java Object.
