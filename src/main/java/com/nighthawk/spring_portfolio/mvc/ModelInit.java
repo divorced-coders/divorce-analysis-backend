@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nighthawk.spring_portfolio.mvc.stocks.DailyStocks;
 import com.nighthawk.spring_portfolio.mvc.stocks.DailyStocksJpaRepository;
 import com.nighthawk.spring_portfolio.mvc.stocks.MonthlyStocks;
-import com.nighthawk.spring_portfolio.mvc.stocks.MonthlyStocksJpaRepository;
+import com.nighthawk.spring_portfolio.mvc.stocks.MonthlyStocksJPARepository;
 import com.nighthawk.spring_portfolio.mvc.fibonacci.Fibo;
 import com.nighthawk.spring_portfolio.mvc.fibonacci.FiboRepository;
 import com.nighthawk.spring_portfolio.mvc.fibonacci.FiboRetracementLevel;
@@ -34,7 +34,7 @@ public class ModelInit {
     @Autowired
     DailyStocksJpaRepository dailyRepo;
     @Autowired
-    MonthlyStocksJpaRepository monthlyRepo;
+    MonthlyStocksJPARepository monthlyRepo;
     @Autowired
     FiboRepository fiboRepo;
 
@@ -74,12 +74,13 @@ public class ModelInit {
                     Date m_date = m_dateFormat.parse(m_dateString);
 
                     System.out.println("Date: " + m_dateString);
-                    String high = m_monthData.get("2. high");
+                    String m_high = m_monthData.get("2. high");
                     List<MonthlyStocks> monthFound = monthlyRepo.findBySymbolAndDate(m_symbol, m_date);
 
                     if (monthFound.size() == 0) {
-                        MonthlyStocks monthly = new MonthlyStocks(high, m_symbol, m_date);
+                        MonthlyStocks monthly = new MonthlyStocks(m_symbol, m_high, m_date);
                         monthlyStocks.add(monthly);
+                        monthlyRepo.save(monthly);
                     } else {
                         System.out.println("No time series data found");
                     }
@@ -121,15 +122,26 @@ public class ModelInit {
 
                             if(dayfound.size() == 0){
                                 DailyStocks daily = new DailyStocks(symbol, high, date);
-                                
+                                dailyStocks.add(daily);
 
                                 for (MonthlyStocks month : monthlyStocks) {
-
-                                    if (date.getMonth() == month.getDate().getMonth()) {
-
+                                    if (date.getMonth() == month.getDate().getMonth() &&
+                                            date.getYear() == month.getDate().getYear()) {
+                                        // Associate daily stock data with this monthly data
+                                        month.addDailyStock(daily);
+                                        monthlyRepo.save(month); // Update the monthly data with the new daily stock
+                                        break; // Break the loop since we found the corresponding monthly data
                                     }
-
                                 }
+
+                                dailyRepo.save(daily);
+                                // for (MonthlyStocks month : monthlyStocks) {
+
+                                //     if (date.getMonth() == month.getDate().getMonth()) {
+
+                                //     }
+
+                                // }
                             }
                             else {
                                 System.out.println("found");

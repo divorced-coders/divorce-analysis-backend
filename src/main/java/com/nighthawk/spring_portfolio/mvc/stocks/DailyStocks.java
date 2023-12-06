@@ -49,6 +49,7 @@ public class DailyStocks {
 
     @ManyToOne
     MonthlyStocks monthlyStock;
+    
 
     public DailyStocks(String symbol, String high, Date date){
         this.symbol = symbol;

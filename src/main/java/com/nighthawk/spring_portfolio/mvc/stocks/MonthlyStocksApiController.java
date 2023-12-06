@@ -13,7 +13,7 @@ public class MonthlyStocksApiController {
 
     // Autowired enables Control to connect URI request and POJO Object to easily for Database CRUD operations
     @Autowired
-    private MonthlyStocksJpaRepository repository;
+    private MonthlyStocksJPARepository repository;
 
     @GetMapping("/chronological")
     public ResponseEntity<List<MonthlyStocks>> getMonthlyStocks() {

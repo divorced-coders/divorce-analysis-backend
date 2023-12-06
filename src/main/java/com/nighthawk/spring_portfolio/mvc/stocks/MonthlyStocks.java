@@ -52,6 +52,11 @@ public class MonthlyStocks {
     @OneToMany(fetch = EAGER)
     private Collection<DailyStocks> daily = new ArrayList<>();
 
+    public void addDailyStock(DailyStocks dailyStock) {
+        this.daily.add(dailyStock);
+        dailyStock.setMonthlyStock(this);
+    }
+
     public MonthlyStocks(String symbol, String high, Date date){
         this.symbol = symbol;
         this.high = high;
