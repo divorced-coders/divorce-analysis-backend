@@ -1,11 +1,14 @@
-package com.nighthawk.spring_portfolio.mvc.fibonacci;
+package com.nighthawk.spring_portfolio.mvc.stocks;
 
 import java.util.List;
+
+import java.util.Date;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
 // JPA is an object-relational mapping (ORM) to persistent data, originally relational databases (SQL). Today JPA implementations has been extended for NoSQL.
-public interface FiboRepository extends JpaRepository<FiboRetracementLevel, Long> {
+public interface MonthlyStocksJPARepository extends JpaRepository<MonthlyStocks, Long> {
     // JPA has many built in methods, these few have been prototyped for this application
-    List<FiboRetracementLevel> findAll();
+    List<MonthlyStocks> findAll();
+    List<MonthlyStocks> findBySymbolAndDate(String symbol, Date date);
 }

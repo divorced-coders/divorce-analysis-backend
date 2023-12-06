@@ -1,19 +1,15 @@
 package com.nighthawk.spring_portfolio.mvc.stocks;
 
-import jakarta.persistence.Convert;
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 import org.springframework.format.annotation.DateTimeFormat;
-
-
 import com.mongodb.lang.NonNull;
-import com.vladmihalcea.hibernate.type.json.JsonType;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,19 +40,7 @@ public class MonthlyStocks {
     private Long id;
 
     @NonNull
-    private String open;
-
-    @NonNull
-    private String close;
-
-    @NonNull
     private String high;
-
-    @NonNull
-    private String low;
-
-    @NonNull
-    private String volume;
 
     @NonNull
     private String symbol;
@@ -64,18 +48,14 @@ public class MonthlyStocks {
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date date;
 
-    @ManyToMany(fetch = EAGER)
+    @NonNull
+    @OneToMany(fetch = EAGER)
     private Collection<DailyStocks> daily = new ArrayList<>();
 
-    public MonthlyStocks(String open, String close, String high, String low, String volume, String symbol, Date date){
-        // Initialize instance variables with provided values
-        this.open = open;       // Opening stock price for the month
-        this.close = close;     // Closing stock price for the month
-        this.high = high;       // Highest stock price during the month
-        this.low = low;         // Lowest stock price during the month
-        this.volume = volume;   // Trading volume for the month
-        this.symbol = symbol;   // Stock symbol or ticker
-        this.date = date;       // Date corresponding to the monthly stock data
+    public MonthlyStocks(String symbol, String high, Date date){
+        this.symbol = symbol;
+        this.high = high;
+        this.date = date;
     }
     
 }

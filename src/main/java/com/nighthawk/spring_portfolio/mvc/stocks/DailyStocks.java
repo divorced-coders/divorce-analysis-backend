@@ -38,35 +38,21 @@ public class DailyStocks {
     private Long id;
 
     @NonNull
-    private String open;
-
-    @NonNull
-    private String close;
-
-    @NonNull
     private String high;
-
-    @NonNull
-    private String low;
-
-    @NonNull
-    private String volume;
-
-    @NonNull
-    private String symbol;
 
     @Nonnull
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date date;
 
-    public DailyStocks(String open, String close, String high, String low, String volume, String symbol, Date date){
-        // Initialize instance variables with provided values
-        this.open = open;       // Opening stock price for the day
-        this.close = close;     // Closing stock price for the day
-        this.high = high;       // Highest stock price during the day
-        this.low = low;         // Lowest stock price during the day
-        this.volume = volume;   // Trading volume for the day
-        this.symbol = symbol;   // Stock symbol or ticker
+    @NonNull
+    private String symbol;
+
+    @ManyToOne
+    MonthlyStocks monthlyStock;
+
+    public DailyStocks(String symbol, String high, Date date){
+        this.symbol = symbol;
+        this.high = high;
         this.date = date;
     }
     
