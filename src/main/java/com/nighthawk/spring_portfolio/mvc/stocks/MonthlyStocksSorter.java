@@ -5,6 +5,8 @@ import java.util.List;
 public class MonthlyStocksSorter {
 
     public static void bubbleSort(List<MonthlyStocks> monthlyStocksList) {
+        long startTime = System.currentTimeMillis();
+        
         int n = monthlyStocksList.size();
         boolean swapped;
         
@@ -19,6 +21,10 @@ public class MonthlyStocksSorter {
             }
             n--;
         } while (swapped);
+
+        long endTime = System.currentTimeMillis();
+        long totalTime = endTime - startTime;
+        System.out.println("Bubble Sort took " + totalTime + " milliseconds.");
     }
 
     private static int compare(MonthlyStocks a, MonthlyStocks b) {
@@ -35,7 +41,7 @@ public class MonthlyStocksSorter {
 
     public static void main(String[] args) {
         // Example usage
-        List<MonthlyStocks> monthlyStocksList = /* Initialize your list here */; // data impending from api
+        List<MonthlyStocks> monthlyStocksList = /* Initialize your list here */;
 
         System.out.println("Before sorting:");
         for (MonthlyStocks monthlyStocks : monthlyStocksList) {
