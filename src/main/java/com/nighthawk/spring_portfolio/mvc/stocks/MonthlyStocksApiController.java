@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController // annotation to simplify the creation of RESTful web services
-@RequestMapping("/api/MonthlyStocks")  // all requests in file begin with this URI
+@RequestMapping("/api/monthly-stocks")  // all requests in file begin with this URI
 public class MonthlyStocksApiController {
 
     // Autowired enables Control to connect URI request and POJO Object to easily for Database CRUD operations
     @Autowired
-    private MonthlyStocksJPARepository repository;
+    private MonthlyStocksJpaRepository repository;
 
     @GetMapping("/chronological")
     public ResponseEntity<List<MonthlyStocks>> getMonthlyStocks() {
@@ -24,7 +24,7 @@ public class MonthlyStocksApiController {
     @GetMapping("/high-to-low")
     public ResponseEntity<List<MonthlyStocks>> getHighToLowMonthlyStocks() {
         // ResponseEntity returns List of Jokes provide by JPA findAll()
-        List<MonthlyStocks> sortedMonthlyStocks = MonthlyStocksSorter.bubbleSortByHighAscending(repository.findAll());
+        List<MonthlyStocks> sortedMonthlyStocks = MonthlyStocksSorter.selectionSortByHighDescending(repository.findAll());
 
         return new ResponseEntity<>( sortedMonthlyStocks, HttpStatus.OK);
     }
@@ -34,6 +34,6 @@ public class MonthlyStocksApiController {
         // ResponseEntity returns List of Jokes provide by JPA findAll()
         List<MonthlyStocks> sortedMonthlyStocks = MonthlyStocksSorter.bubbleSortByHighAscending(repository.findAll());
 
-        return new ResponseEntity<>( repository.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>( sortedMonthlyStocks, HttpStatus.OK);
     }
 }

@@ -6,10 +6,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nighthawk.spring_portfolio.mvc.stocks.DailyStocks;
 import com.nighthawk.spring_portfolio.mvc.stocks.DailyStocksJpaRepository;
 import com.nighthawk.spring_portfolio.mvc.stocks.MonthlyStocks;
-import com.nighthawk.spring_portfolio.mvc.stocks.MonthlyStocksJPARepository;
+import com.nighthawk.spring_portfolio.mvc.stocks.MonthlyStocksJpaRepository;
 import com.nighthawk.spring_portfolio.mvc.fibonacci.Fibo;
 import com.nighthawk.spring_portfolio.mvc.fibonacci.FiboRepository;
 import com.nighthawk.spring_portfolio.mvc.fibonacci.FiboRetracementLevel;
@@ -34,7 +34,7 @@ public class ModelInit {
     @Autowired
     DailyStocksJpaRepository dailyRepo;
     @Autowired
-    MonthlyStocksJPARepository monthlyRepo;
+    MonthlyStocksJpaRepository monthlyRepo;
     @Autowired
     FiboRepository fiboRepo;
 
@@ -48,7 +48,7 @@ public class ModelInit {
             // monthly request
             HttpRequest m_request = HttpRequest.newBuilder()
                     .uri(URI.create(
-                            "https://alpha-vantage.p.rapidapi.com/query?function=TIME_SERIES_MONTHLY&symbol=MSFT&outputsize=compact&datatype=json"))
+                            "https://alpha-vantage.p.rapidapi.com/query?function=TIME_SERIES_MONTHLY&symbol=MSFT&outputsize=12&datatype=json"))
                     .header("X-RapidAPI-Key", "a96f7bb54emshee5a698b2344228p12bd6cjsnbb7e0177bdb6")
                     .header("X-RapidAPI-Host", "alpha-vantage.p.rapidapi.com")
                     .method("GET", HttpRequest.BodyPublishers.noBody())
@@ -73,26 +73,34 @@ public class ModelInit {
                     Map<String, String> m_monthData = entry.getValue();
                     Date m_date = m_dateFormat.parse(m_dateString);
 
-                    System.out.println("Date: " + m_dateString);
+                    System.out.println("Monthly Date: " + m_dateString);
                     String m_high = m_monthData.get("2. high");
                     List<MonthlyStocks> monthFound = monthlyRepo.findBySymbolAndDate(m_symbol, m_date);
 
-                    if (monthFound.size() == 0) {
-                        MonthlyStocks monthly = new MonthlyStocks(m_symbol, m_high, m_date);
-                        monthlyStocks.add(monthly);
-                        monthlyRepo.save(monthly);
-                    } else {
-                        System.out.println("No time series data found");
-                    }
+                    Calendar monthlyTime = Calendar.getInstance();
+                    monthlyTime.setTime(m_date);
 
+                    if (monthFound.size() == 0) {
+                        
+                        if (monthlyTime.get(Calendar.YEAR) == 2023) {
+                            MonthlyStocks monthly = new MonthlyStocks(m_symbol, m_high, m_date);
+                            monthlyStocks.add(monthly);
+                            monthlyRepo.save(monthly);
+                        } else {
+                            System.out.println("Filtered Year");
+                        }
+                        
+                    } else {
+                        System.out.println("Item exists in DB");
+                    }
                 }
             } else {
-                System.out.println("No time series data found");
+                System.out.println("No MONTHLY time series data found");
             }
             
             // daily stocks
             HttpRequest d_request = HttpRequest.newBuilder()
-                .uri(URI.create("https://alpha-vantage.p.rapidapi.com/query?function=TIME_SERIES_DAILY&symbol=MSFT&outputsize=compact&datatype=json"))
+                .uri(URI.create("https://alpha-vantage.p.rapidapi.com/query?function=TIME_SERIES_DAILY&symbol=MSFT&outputsize=341&datatype=json"))
                 .header("X-RapidAPI-Key", "a96f7bb54emshee5a698b2344228p12bd6cjsnbb7e0177bdb6")
                 .header("X-RapidAPI-Host", "alpha-vantage.p.rapidapi.com")
                 .method("GET", HttpRequest.BodyPublishers.noBody())
@@ -115,42 +123,44 @@ public class ModelInit {
                             Date date = dateFormat.parse(dateString);
                             
                             // Now you can access the date and dayData information
-                            System.out.println("Date: " + dateString);
-                            System.out.println("High: " + dayData.get("2. high"));
+                            System.out.println("Daily Date: " + dateString);
+                            System.out.println("Daily High: " + dayData.get("2. high"));
                             String high = dayData.get("2. high");
                             List<DailyStocks> dayfound = dailyRepo.findBySymbolAndDate(symbol, date);
 
                             if(dayfound.size() == 0){
-                                DailyStocks daily = new DailyStocks(symbol, high, date);
-                                dailyStocks.add(daily);
 
-                                for (MonthlyStocks month : monthlyStocks) {
-                                    if (date.getMonth() == month.getDate().getMonth() &&
-                                            date.getYear() == month.getDate().getYear()) {
-                                        // Associate daily stock data with this monthly data
-                                        month.addDailyStock(daily);
-                                        monthlyRepo.save(month); // Update the monthly data with the new daily stock
-                                        break; // Break the loop since we found the corresponding monthly data
+                                Calendar dailyCalendar = Calendar.getInstance();     
+                                dailyCalendar.setTime(date);
+
+                                if (dailyCalendar.get(Calendar.YEAR) == 2023) {
+                                    DailyStocks daily = new DailyStocks(symbol, high, date);
+
+                                    for (MonthlyStocks month : monthlyStocks) {
+
+                                        Calendar monthlyCalendar = Calendar.getInstance();
+                                        monthlyCalendar.setTime(month.getDate());
+    
+                                        if (dailyCalendar.get(Calendar.MONTH) == monthlyCalendar.get(Calendar.MONTH)) {
+                                            // Associate daily stock data with t his monthly data
+    
+                                            daily.setMonthlyStock(month);
+                                            break; // Break the loop since we found the corresponding monthly data
+                                        }
                                     }
+
+                                    dailyRepo.save(daily);
+                                } else {
+                                    System.out.println("Filtered Year");
                                 }
-
-                                dailyRepo.save(daily);
-                                // for (MonthlyStocks month : monthlyStocks) {
-
-                                //     if (date.getMonth() == month.getDate().getMonth()) {
-
-                                //     }
-
-                                // }
                             }
                             else {
-                                System.out.println("found");
+                                System.out.println("Item exists in DB");
                             }
                         }
                     } else {
-                        System.out.println("No time series data found");
+                        System.out.println("No DAILY time series data found");
                     }
-
         };
 
     }

@@ -1,6 +1,5 @@
 package com.nighthawk.spring_portfolio.mvc.stocks;
 
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,12 +9,9 @@ import jakarta.persistence.*;
 
 import java.util.Date;
 
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.mongodb.lang.NonNull;
-import com.vladmihalcea.hibernate.type.json.JsonType;
 
 
 import lombok.AllArgsConstructor;

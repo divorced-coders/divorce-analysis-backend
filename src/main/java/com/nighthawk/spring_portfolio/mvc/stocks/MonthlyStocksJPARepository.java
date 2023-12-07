@@ -7,7 +7,7 @@ import java.util.Date;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 // JPA is an object-relational mapping (ORM) to persistent data, originally relational databases (SQL). Today JPA implementations has been extended for NoSQL.
-public interface MonthlyStocksJPARepository extends JpaRepository<MonthlyStocks, Long> {
+public interface MonthlyStocksJpaRepository extends JpaRepository<MonthlyStocks, Long> {
     // JPA has many built in methods, these few have been prototyped for this application
     List<MonthlyStocks> findAll();
     List<MonthlyStocks> findBySymbolAndDate(String symbol, Date date);

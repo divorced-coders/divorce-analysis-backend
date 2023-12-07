@@ -1,11 +1,9 @@
 package com.nighthawk.spring_portfolio.mvc.stocks;
 
-import jakarta.annotation.Nonnull;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 
 import org.springframework.format.annotation.DateTimeFormat;
