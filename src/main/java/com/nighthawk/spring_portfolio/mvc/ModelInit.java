@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nighthawk.spring_portfolio.mvc.stocks.DailyStocks;
 import com.nighthawk.spring_portfolio.mvc.stocks.DailyStocksJpaRepository;
 import com.nighthawk.spring_portfolio.mvc.stocks.MonthlyStocks;
-import com.nighthawk.spring_portfolio.mvc.stocks.MonthlyStocksJPARepository;
+import com.nighthawk.spring_portfolio.mvc.stocks.MonthlyStocksJpaRepository;
 import com.nighthawk.spring_portfolio.mvc.fibonacci.Fibo;
 import com.nighthawk.spring_portfolio.mvc.fibonacci.FiboRepository;
 import com.nighthawk.spring_portfolio.mvc.fibonacci.FiboRetracementLevel;
@@ -34,7 +34,7 @@ public class ModelInit {
     @Autowired
     DailyStocksJpaRepository dailyRepo;
     @Autowired
-    MonthlyStocksJPARepository monthlyRepo;
+    MonthlyStocksJpaRepository monthlyRepo;
     @Autowired
     FiboRepository fiboRepo;
 
@@ -125,8 +125,8 @@ public class ModelInit {
 
                                 for (MonthlyStocks month : monthlyStocks) {
 
-                                    if (date.getMonth() == monthly.getDate().getMonth()) {
-                                        
+                                    if (date.getMonth() == month.getDate().getMonth()) {
+
                                     }
 
                                 }
