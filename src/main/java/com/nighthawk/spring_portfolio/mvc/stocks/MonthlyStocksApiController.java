@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = {"http://localhost:4200/"})
 @RestController // annotation to simplify the creation of RESTful web services
 @RequestMapping("/api/monthly-stocks")  // all requests in file begin with this URI
 public class MonthlyStocksApiController {
