@@ -42,6 +42,10 @@ public class ModelInit {
     CommandLineRunner run() { // The run() method will be executed after the application starts
         return args -> {
 
+            if (!monthlyRepo.findAll().equals(null)) {
+              return;   
+            }
+
             ArrayList<MonthlyStocks> monthlyStocks = new ArrayList<MonthlyStocks>();
 
             // monthly request
@@ -96,6 +100,10 @@ public class ModelInit {
             } else {
                 System.out.println("No MONTHLY time series data found");
             }
+
+            if (!dailyRepo.findAll().equals(null)) {
+                return;   
+              }
 
             // daily stocks
             HttpRequest d_request = HttpRequest.newBuilder()
@@ -164,7 +172,10 @@ public class ModelInit {
                 System.out.println("No DAILY time series data found");
             }
 
-            FiboRetracementLevel[] retracements = new FiboRetracementLevel[5 + 1];
+            if (!fiboRepo.findAll().equals(null)) {
+                return;   
+              }
+
             Fibo fibo = new FibonacciViaMemoization();
             for (int i = 0; i <= 5; i++) {
                 FiboRetracementLevel level = new FiboRetracementLevel();
