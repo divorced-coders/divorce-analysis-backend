@@ -31,7 +31,6 @@ public class FibonacciViaMemoization extends Fibo {
         // Return the calculated result
         return result;
     }
-
     public static void main(String[] args) {
         Fibo fibo = new FibonacciViaMemoization();
         int n = 4;

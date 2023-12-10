@@ -43,7 +43,6 @@ public class ModelInit {
         return args -> {
 
             ArrayList<MonthlyStocks> monthlyStocks = new ArrayList<MonthlyStocks>();
-            ArrayList<DailyStocks> dailyStocks = new ArrayList<DailyStocks>();
 
             // monthly request
             HttpRequest m_request = HttpRequest.newBuilder()
@@ -81,7 +80,7 @@ public class ModelInit {
                     monthlyTime.setTime(m_date);
 
                     if (monthFound.size() == 0) {
-                        
+
                         if (monthlyTime.get(Calendar.YEAR) == 2023) {
                             MonthlyStocks monthly = new MonthlyStocks(m_symbol, m_high, m_date);
                             monthlyStocks.add(monthly);
@@ -89,7 +88,7 @@ public class ModelInit {
                         } else {
                             System.out.println("Filtered Year");
                         }
-                        
+
                     } else {
                         System.out.println("Item exists in DB");
                     }
@@ -97,90 +96,90 @@ public class ModelInit {
             } else {
                 System.out.println("No MONTHLY time series data found");
             }
-            
+
             // daily stocks
             HttpRequest d_request = HttpRequest.newBuilder()
-                .uri(URI.create("https://alpha-vantage.p.rapidapi.com/query?function=TIME_SERIES_DAILY&symbol=MSFT&outputsize=341&datatype=json"))
-                .header("X-RapidAPI-Key", "a96f7bb54emshee5a698b2344228p12bd6cjsnbb7e0177bdb6")
-                .header("X-RapidAPI-Host", "alpha-vantage.p.rapidapi.com")
-                .method("GET", HttpRequest.BodyPublishers.noBody())
-                .build();
-            HttpResponse<String> d_response = HttpClient.newHttpClient().send(d_request, HttpResponse.BodyHandlers.ofString());
+                    .uri(URI.create(
+                            "https://alpha-vantage.p.rapidapi.com/query?function=TIME_SERIES_DAILY&symbol=MSFT&outputsize=341&datatype=json"))
+                    .header("X-RapidAPI-Key", "a96f7bb54emshee5a698b2344228p12bd6cjsnbb7e0177bdb6")
+                    .header("X-RapidAPI-Host", "alpha-vantage.p.rapidapi.com")
+                    .method("GET", HttpRequest.BodyPublishers.noBody())
+                    .build();
+            HttpResponse<String> d_response = HttpClient.newHttpClient().send(d_request,
+                    HttpResponse.BodyHandlers.ofString());
             System.out.println(d_response.body());
             String d_data = d_response.body();
-            
+
             ObjectMapper d_objectMapper = new ObjectMapper();
-            Map<String, Object> d_jsonData = d_objectMapper.readValue(d_data, new TypeReference<Map<String, Object>>() {});
+            Map<String, Object> d_jsonData = d_objectMapper.readValue(d_data, new TypeReference<Map<String, Object>>() {
+            });
             Map<String, Object> d_metaData = (Map<String, Object>) d_jsonData.get("Meta Data");
             String symbol = d_metaData != null ? (String) d_metaData.get("2. Symbol") : "N/A";
-            Map<String, Map<String, String>> timeSeries = (Map<String, Map<String, String>>) d_jsonData.get("Time Series (Daily)");
+            Map<String, Map<String, String>> timeSeries = (Map<String, Map<String, String>>) d_jsonData
+                    .get("Time Series (Daily)");
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             if (timeSeries != null) {
-                        // Iterate over each date in the time series
-                        for (Map.Entry<String, Map<String, String>> entry : timeSeries.entrySet()) {
-                            String dateString = entry.getKey();
-                            Map<String, String> dayData = entry.getValue();
-                            Date date = dateFormat.parse(dateString);
-                            
-                            // Now you can access the date and dayData information
-                            System.out.println("Daily Date: " + dateString);
-                            System.out.println("Daily High: " + dayData.get("2. high"));
-                            String high = dayData.get("2. high");
-                            List<DailyStocks> dayfound = dailyRepo.findBySymbolAndDate(symbol, date);
+                // Iterate over each date in the time series
+                for (Map.Entry<String, Map<String, String>> entry : timeSeries.entrySet()) {
+                    String dateString = entry.getKey();
+                    Map<String, String> dayData = entry.getValue();
+                    Date date = dateFormat.parse(dateString);
 
-                            if(dayfound.size() == 0){
+                    // Now you can access the date and dayData information
+                    System.out.println("Daily Date: " + dateString);
+                    System.out.println("Daily High: " + dayData.get("2. high"));
+                    String high = dayData.get("2. high");
+                    List<DailyStocks> dayfound = dailyRepo.findBySymbolAndDate(symbol, date);
 
-                                Calendar dailyCalendar = Calendar.getInstance();     
-                                dailyCalendar.setTime(date);
+                    if (dayfound.size() == 0) {
 
-                                if (dailyCalendar.get(Calendar.YEAR) == 2023) {
-                                    DailyStocks daily = new DailyStocks(symbol, high, date);
+                        Calendar dailyCalendar = Calendar.getInstance();
+                        dailyCalendar.setTime(date);
 
-                                    for (MonthlyStocks month : monthlyStocks) {
+                        if (dailyCalendar.get(Calendar.YEAR) == 2023) {
+                            DailyStocks daily = new DailyStocks(symbol, high, date);
 
-                                        Calendar monthlyCalendar = Calendar.getInstance();
-                                        monthlyCalendar.setTime(month.getDate());
-    
-                                        if (dailyCalendar.get(Calendar.MONTH) == monthlyCalendar.get(Calendar.MONTH)) {
-                                            // Associate daily stock data with t his monthly data
-    
-                                            daily.setMonthlyStock(month);
-                                            break; // Break the loop since we found the corresponding monthly data
-                                        }
-                                    }
+                            for (MonthlyStocks month : monthlyStocks) {
 
-                                    dailyRepo.save(daily);
-                                } else {
-                                    System.out.println("Filtered Year");
+                                Calendar monthlyCalendar = Calendar.getInstance();
+                                monthlyCalendar.setTime(month.getDate());
+
+                                if (dailyCalendar.get(Calendar.MONTH) == monthlyCalendar.get(Calendar.MONTH)) {
+                                    // Associate daily stock data with t his monthly data
+
+                                    daily.setMonthlyStock(month);
+                                    break; // Break the loop since we found the corresponding monthly data
                                 }
                             }
-                            else {
-                                System.out.println("Item exists in DB");
-                            }
+
+                            dailyRepo.save(daily);
+                        } else {
+                            System.out.println("Filtered Year");
                         }
                     } else {
-                        System.out.println("No DAILY time series data found");
+                        System.out.println("Item exists in DB");
                     }
+                }
+            } else {
+                System.out.println("No DAILY time series data found");
+            }
+
+            FiboRetracementLevel[] retracements = new FiboRetracementLevel[5 + 1];
+            Fibo fibo = new FibonacciViaMemoization();
+            for (int i = 0; i <= 5; i++) {
+                FiboRetracementLevel level = new FiboRetracementLevel();
+                if (i >= 2) {
+                    double numerator = fibo.fibonacci(i - 2);
+                    double denominator = fibo.fibonacci(i - 1);
+                    level.setValue(numerator / denominator);
+                } else {
+                    // Handle the case where i < 2
+                    level.setValue(0); // You can set the value to another default value if needed
+                }
+
+                fiboRepo.save(level);
+            }
         };
 
     }
-
-    public static FiboRetracementLevel[] initRetracements(int n) {
-        FiboRetracementLevel[] retracements = new FiboRetracementLevel[n + 1];
-        Fibo fibo = new FibonacciViaMemoization();
-        for (int i = 0; i <= n; i++) {
-            FiboRetracementLevel level = new FiboRetracementLevel();
-            if (i >= 2) {
-                double numerator = fibo.fibonacci(i - 2);
-                double denominator = fibo.fibonacci(i - 1);
-                level.setValue(numerator / denominator);
-            } else {
-                // Handle the case where i < 2
-                level.setValue(0); // You can set the value to another default value if needed
-            }
-            retracements[i] = level;
-        }
-        return retracements;
-    }
-
 }
