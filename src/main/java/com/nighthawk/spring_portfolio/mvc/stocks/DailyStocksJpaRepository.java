@@ -11,5 +11,5 @@ public interface DailyStocksJpaRepository extends JpaRepository<DailyStocks, Lon
     List<DailyStocks> findAllByOrderBySymbolAsc();
     List<DailyStocks> findBySymbolIgnoreCase(String DailyStocks);
     List<DailyStocks> findBySymbolAndDate(String symbol, Date date);
-
+    List<DailyStocks> findByMonthlyStockId(Long monthlyStockId);
 }

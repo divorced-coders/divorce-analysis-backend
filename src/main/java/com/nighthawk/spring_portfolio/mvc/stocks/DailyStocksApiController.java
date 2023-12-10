@@ -11,13 +11,26 @@ import java.util.List;
 @RequestMapping("/api/DailyStocks")  // all requests in file begin with this URI
 public class DailyStocksApiController {
 
-    // Autowired enables Control to connect URI request and POJO Object to easily for Database CRUD operations
     @Autowired
     private DailyStocksJpaRepository repository;
 
     @GetMapping("/")
     public ResponseEntity<List<DailyStocks>> getDailyStocks() {
-        // ResponseEntity returns List of Jokes provide by JPA findAll()
-        return new ResponseEntity<>( repository.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>(repository.findAll(), HttpStatus.OK);
     }
+
+    // New method to retrieve DailyStocks based on monthly ID
+    @GetMapping("/{monthlyId}")
+    public ResponseEntity<List<DailyStocks>> getDailyStocksByMonthlyId(@PathVariable Long monthlyId) {
+        // Retrieve DailyStocks based on the monthly ID
+        List<DailyStocks> dailyStocks = repository.findByMonthlyStockId(monthlyId);
+
+        // Check if there are any matching DailyStocks
+        if (dailyStocks.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(dailyStocks, HttpStatus.OK);
+        }
+    }
+
 }
