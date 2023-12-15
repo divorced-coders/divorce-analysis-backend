@@ -1,15 +1,21 @@
 package com.nighthawk.spring_portfolio.mvc.stocks.sorting;
 
 import java.util.List;
+
+import org.springframework.util.StopWatch;
+
 import com.nighthawk.spring_portfolio.mvc.stocks.MonthlyStocks;
 
 public class Descending extends MonthlyStocksSorter {
+
+  StopWatch sw = new StopWatch();
+  int comparisons;
 
   @Override
   public SortedData selectionSort(List<MonthlyStocks> monthlyStocksList) {
     int n = monthlyStocksList.size();
 
-    super.sw.start();
+    sw.start();
     for (int i = 0; i < n - 1; i++) {
       int maxIndex = i;
 
@@ -17,6 +23,7 @@ public class Descending extends MonthlyStocksSorter {
         if (compareStrings(monthlyStocksList.get(j).getHigh(), monthlyStocksList.get(maxIndex).getHigh()) > 0) {
           maxIndex = j;
         }
+        comparisons++;
       }
 
       // Swap elements
@@ -24,9 +31,9 @@ public class Descending extends MonthlyStocksSorter {
       monthlyStocksList.set(maxIndex, monthlyStocksList.get(i));
       monthlyStocksList.set(i, temp);
     }
-    super.sw.stop();
+    sw.stop();
 
-    return new SortedData(super.comparisons, super.sw.getTotalTimeMillis(), monthlyStocksList);
+    return new SortedData(comparisons, sw.getTotalTimeMillis(), monthlyStocksList);
   }
 
 }
