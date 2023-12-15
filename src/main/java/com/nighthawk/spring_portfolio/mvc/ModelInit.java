@@ -42,9 +42,9 @@ public class ModelInit {
     CommandLineRunner run() { // The run() method will be executed after the application starts
         return args -> {
 
-            if (!monthlyRepo.findAll().equals(null)) {
-              return;   
-            }
+            // if (!monthlyRepo.findAll().equals(null)) {
+            //   return;   
+            // }
 
             ArrayList<MonthlyStocks> monthlyStocks = new ArrayList<MonthlyStocks>();
 
@@ -101,14 +101,14 @@ public class ModelInit {
                 System.out.println("No MONTHLY time series data found");
             }
 
-            if (!dailyRepo.findAll().equals(null)) {
-                return;   
-              }
+            // if (!dailyRepo.findAll().equals(null)) {
+            //     return;   
+            //   }
 
             // daily stocks
             HttpRequest d_request = HttpRequest.newBuilder()
                     .uri(URI.create(
-                            "https://alpha-vantage.p.rapidapi.com/query?function=TIME_SERIES_DAILY&symbol=MSFT&outputsize=341&datatype=json"))
+                            "https://alpha-vantage.p.rapidapi.com/query?function=TIME_SERIES_DAILY&symbol=MSFT&outputsize=full&datatype=json"))
                     .header("X-RapidAPI-Key", "a96f7bb54emshee5a698b2344228p12bd6cjsnbb7e0177bdb6")
                     .header("X-RapidAPI-Host", "alpha-vantage.p.rapidapi.com")
                     .method("GET", HttpRequest.BodyPublishers.noBody())
@@ -127,8 +127,16 @@ public class ModelInit {
                     .get("Time Series (Daily)");
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             if (timeSeries != null) {
+
+                int daysToIterate = 365;
+                int count = 0;
+
                 // Iterate over each date in the time series
                 for (Map.Entry<String, Map<String, String>> entry : timeSeries.entrySet()) {
+                    if (count++ >= daysToIterate) {
+                        break;
+                    }
+                    
                     String dateString = entry.getKey();
                     Map<String, String> dayData = entry.getValue();
                     Date date = dateFormat.parse(dateString);
@@ -155,6 +163,7 @@ public class ModelInit {
                                 if (dailyCalendar.get(Calendar.MONTH) == monthlyCalendar.get(Calendar.MONTH)) {
                                     // Associate daily stock data with t his monthly data
 
+                                    month.addDailyStock(daily);
                                     daily.setMonthlyStock(month);
                                     break; // Break the loop since we found the corresponding monthly data
                                 }
@@ -172,22 +181,23 @@ public class ModelInit {
                 System.out.println("No DAILY time series data found");
             }
 
-            if (!fiboRepo.findAll().equals(null)) {
-                return;   
-              }
+            // if (!fiboRepo.findAll().equals(null)) {
+            //     return;   
+            // }
 
             Fibo fibo = new FibonacciViaMemoization();
-            for (int i = 0; i <= 5; i++) {
+            double[] retracementLevels = {0.236, 0.382, 0.5, 0.618, 0.786};
+            for (int i = 0; i < retracementLevels.length; i++) {
                 FiboRetracementLevel level = new FiboRetracementLevel();
                 if (i >= 2) {
                     double numerator = fibo.fibonacci(i - 2);
                     double denominator = fibo.fibonacci(i - 1);
-                    level.setValue(numerator / denominator);
+                    // level.setValue(numerator / denominator);
                 } else {
                     // Handle the case where i < 2
-                    level.setValue(0); // You can set the value to another default value if needed
+                    // level.setValue(0); // You can set the value to another default value if needed
                 }
-
+                level.setValue(retracementLevels[i]);
                 fiboRepo.save(level);
             }
         };
